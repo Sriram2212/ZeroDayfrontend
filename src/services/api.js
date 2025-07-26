@@ -1,31 +1,28 @@
 import axios from 'axios';
-
 const api = axios.create({
-  baseURL: `${process.env.REACT_APP_API_URL}` || 'http://localhost:5000/api'|| process.env.REACT_APP_API_URL ,
+  baseURL: process.env.REACT_APP_API_URL ? 
+    `${process.env.REACT_APP_API_URL}/api` : 
+    'http://localhost:5000/api',
+  timeout: 10000,
+  withCredentials: true
 });
 
-// Add JWT token to headers if available
-api.interceptors.request.use((config) => {
-  const token = localStorage.getItem('token');
-  if (token) {
-    config.headers.Authorization = `Bearer ${token}`;
-  }
-  return config;
-});
-
-// Handle response errors
+// Enhanced error handling
 api.interceptors.response.use(
   (response) => response,
   (error) => {
     if (error.response?.status === 401) {
-      console.error('Authentication error:', error.response.data);
-      // Optionally redirect to login or clear token
       localStorage.removeItem('token');
+      window.location.href = '/login';
     }
-    return Promise.reject(error);
+    return Promise.reject({
+      message: error.response?.data?.message || 
+              error.message || 
+              'Network Error',
+      status: error.response?.status
+    });
   }
 );
-
 // Skill APIs
 export const fetchSkills = () => api.get('/skills');
 export const fetchSkill = (id) => api.get(`/skills/${id}`);
