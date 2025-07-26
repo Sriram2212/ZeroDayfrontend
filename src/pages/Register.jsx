@@ -21,20 +21,25 @@ const Register = () => {
   };
 
   const handleSubmit = async e => {
-    e.preventDefault();
-    setError('');
-    setIsSubmitting(true);
-    
-    try {
-      await register(form.username, form.email, form.password, form.role);
-      navigate('/dashboard');
-    } catch (err) {
-      setError(err.response?.data?.message || 'Registration failed. Please try again.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
+  e.preventDefault();
+  setError('');
+  setIsSubmitting(true);
+  
+  try {
+    await register(form.username, form.email, form.password, form.role);
+    navigate('/dashboard');
+  } catch (err) {
+    setError(err.message || 'Registration failed. Please try again.');
+    // Log detailed error for debugging
+    console.error('Registration error details:', {
+      message: err.message,
+      status: err.status,
+      data: err.response?.data
+    });
+  } finally {
+    setIsSubmitting(false);
+  }
+};
   return (
     <div className="register-container">
       <div className="register-card">
