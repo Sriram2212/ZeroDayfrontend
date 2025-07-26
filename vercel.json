@@ -2,23 +2,22 @@
   "buildCommand": "npm run build",
   "outputDirectory": "build",
   "framework": "create-react-app",
-  "rewrites": [
+  "headers": [
     {
-      "source": "/(.*)",
-      "destination": "/index.html"
-    }
-  ],
-  "routes": [
-    {
-      "src": "/manifest.json",
-      "dest": "/manifest.json",
-      "headers": {
-        "Access-Control-Allow-Origin": "*",
-        "Cache-Control": "public, max-age=3600"
-      }
+      "source": "/manifest.json",
+      "headers": [
+        {
+          "key": "Access-Control-Allow-Origin",
+          "value": "*"
+        },
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=3600"
+        }
+      ]
     }
   ],
   "env": {
-    "REACT_APP_API_URL": "https://zeroday-final-l83ukzxvk-sriram2212s-projects.vercel.app"
+    "REACT_APP_API_URL": "https://zeroday-final-6t25qjbxb-sriram2212s-projects.vercel.app"
   }
 }
