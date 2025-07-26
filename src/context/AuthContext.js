@@ -30,10 +30,34 @@ export const AuthProvider = ({ children }) => {
     console.log('AuthContext: User after login:', userObj); // Debug
   };
 
-  const register = async (username, email, password, role) => {
-    await api.post('/auth/register', { username, email, password, role });
-    await login(email, password);
-  };
+ const register = async (username, email, password, role) => {
+  try {
+    const response = await api.post('/auth/register', { 
+      username, 
+      email, 
+      password, 
+      role 
+    });
+    
+    const loginResponse = await api.post('/auth/login', { email, password });
+    
+    setToken(loginResponse.data.token);
+    localStorage.setItem('token', loginResponse.data.token);
+    
+    const userObj = {
+      ...loginResponse.data.user,
+      _id: loginResponse.data.user._id || loginResponse.data.user.id,
+      skillsOffered: loginResponse.data.user.skillsOffered || [],
+      averageRating: loginResponse.data.user.averageRating || 0
+    };
+    
+    setUser(userObj);
+    return userObj;
+  } catch (error) {
+    console.error('Registration error:', error);
+    throw error;
+  }
+};
 
   // Optionally, add a function to refresh user info from backend
   const refreshUser = async () => {
